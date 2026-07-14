@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Моя Цель: Квартира</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Починка темной темы для Tailwind
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+    <script>
+        // Инициализация темы до загрузки контента, чтобы не было моргания
+        if (localStorage.getItem('theme') === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-100 p-4 font-sans max-w-md mx-auto pb-10 transition-colors duration-300">
+
+    <!-- Шапка с переключателем темы -->
+    <div class="flex justify-between items-center mb-4">
+        <span class="text-xs font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400">Мой путь к 30 годам</span>
+        <button onclick="toggleTheme()" class="p-2 rounded-full bg-white dark:bg-gray-800 shadow-md transition-colors">
+            <span id="theme-icon" class="text-lg">🌙</span>
+        </button>
+    </div>
+
+    <!-- Визуализация квартиры (30 квадратов) -->
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-lg mb-6 transition-colors">
+        <h2 class="text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider mb-3">Визуализация квартиры (30 кв.м)</h2>
+        <div class="grid grid-cols-6 gap-2 mb-3" id="apartment-grid"></div>
+        <div class="text-center text-xs font-medium text-blue-600 dark:text-blue-400" id="apartment-zone">
+            Выкупаем прихожую...
+        </div>
+    </div>
+
+    <!-- ЕЖЕНЕДЕЛЬНЫЙ СПРИНТ -->
+    <div class="bg-gradient-to-br from-indigo-600 to-blue-700 dark:from-indigo-900 dark:to-blue-900 p-6 rounded-3xl shadow-lg mb-6 text-white relative overflow-hidden">
+        <div class="absolute top-0 right-0 p-4 opacity-20 text-6xl">🎯</div>
+        <div class="relative z-10">
+            <div class="flex justify-between items-end mb-2">
+                <h2 class="font-bold text-xs uppercase tracking-wider text-indigo-100" id="sprint-title">Спринт недели</h2>
+                <span class="text-[10px] bg-white/20 px-2 py-1 rounded-full" id="sprint-timer">Пн-Пт</span>
+            </div>
+            
+            <div id="sprint-progress-text" class="text-3xl font-black mb-2">0 / 0 ₸</div>
+            
+            <div class="w-full bg-black/20 rounded-full h-3 mb-3 overflow-hidden">
+                <div id="sprint-bar" class="bg-emerald-400 h-full w-0 transition-all duration-500 shadow-[0_0_10px_rgba(52,211,153,0.8)]"></div>
+            </div>
+            
+            <div class="text-xs bg-black/10 p-3 rounded-xl border border-white/10">
+                <span class="font-bold text-indigo-100">Награда за план:</span> 
+                <span id="sprint-reward" class="block mt-1 font-medium text-white">---</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Прогресс (Общий) -->
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-lg mb-6 transition-colors">
+        <h1 class="text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider">Накопления (+15% деп)</h1>
+        <div id="progress-text" class="text-4xl font-black text-blue-600 dark:text-blue-400 mb-2">0 ₸</div>
+        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-4 overflow-hidden">
+            <div id="progress-bar" class="bg-blue-600 dark:bg-blue-500 h-full w-0 transition-all duration-500"></div>
+        </div>
+        <div class="flex justify-between text-[10px] text-gray-400 mt-2">
+            <span id="days-left">Осталось: -- дней до 30 лет</span>
+            <span id="target-adjusted">Цель с инфляцией: 10 000 000 ₸</span>
+        </div>
+        
+        <button onclick="shareProgress()" class="w-full mt-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-xl text-xs transition duration-250 flex items-center justify-center gap-2">
+            <span>💬 Отправить отчет любимой</span>
+        </button>
+    </div>
+
+    <!-- Аналитика и Прогнозы -->
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-lg mb-6 space-y-4 transition-colors">
+        <h2 class="font-bold text-sm uppercase text-gray-600 dark:text-gray-400">Аналитика и Прогноз</h2>
+        <div class="grid grid-cols-2 gap-4">
+            <div class="bg-gray-50 dark:bg-gray-700 p-3 rounded-xl text-center">
+                <p class="text-[10px] text-gray-500 dark:text-gray-400 uppercase">За этот месяц</p>
+                <div id="stat-month" class="font-bold text-sm">0 ₸</div>
+            </div>
+            <div class="bg-gray-50 dark:bg-gray-700 p-3 rounded-xl text-center">
+                <p class="text-[10px] text-gray-500 dark:text-gray-400 uppercase">Ср. отложений/мес</p>
+                <div id="stat-avg-month" class="font-bold text-sm">0 ₸</div>
+            </div>
+        </div>
+        <div class="bg-blue-50 dark:bg-blue-900/30 p-4 rounded-2xl border border-blue-100 dark:border-blue-900/50 text-center">
+            <p class="text-xs text-blue-600 dark:text-blue-400 font-medium">Прогноз достижения цели:</p>
+            <div id="forecast-date" class="font-black text-lg text-blue-800 dark:text-blue-300 mt-1">Недостаточно данных</div>
+            <p id="forecast-status" class="text-[10px] text-blue-500 dark:text-blue-400 mt-1"></p>
+        </div>
+    </div>
+
+    <!-- Ввод данных -->
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-lg mb-6 transition-colors">
+        <h2 class="font-bold mb-4 text-sm uppercase text-gray-600 dark:text-gray-400">Новое поступление</h2>
+        <div class="space-y-3">
+            <div class="flex items-center gap-3">
+                <span class="text-xs w-24 text-gray-600 dark:text-gray-300">Доставка</span>
+                <input type="number" id="cat-delivery" placeholder="0" class="w-full p-2 border rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors">
+            </div>
+            <div class="flex items-center gap-3">
+                <span class="text-xs w-24 text-gray-600 dark:text-gray-300">Полиграфия</span>
+                <input type="number" id="cat-poly" placeholder="0" class="w-full p-2 border rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors">
+            </div>
+            <div class="flex items-center gap-3">
+                <span class="text-xs w-24 text-gray-600 dark:text-gray-300">Основная</span>
+                <input type="number" id="cat-main" placeholder="0" class="w-full p-2 border rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors">
+            </div>
+            <div class="flex items-center gap-3">
+                <span class="text-xs w-24 text-gray-600 dark:text-gray-300">Другое</span>
+                <input type="number" id="cat-other" placeholder="0" class="w-full p-2 border rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors">
+            </div>
+            <button onclick="addAll()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 active:scale-95 transition mt-4">Сохранить всё</button>
+        </div>
+    </div>
+
+    <!-- История -->
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-lg transition-colors">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="font-bold text-sm uppercase text-gray-600 dark:text-gray-400">История</h2>
+            <button onclick="clearAll()" class="text-[10px] text-red-500 hover:underline">Очистить данные</button>
+        </div>
+        <div id="history" class="space-y-3"></div>
+    </div>
+
+    <script>
+        let savings = [];
+        try {
+            savings = JSON.parse(localStorage.getItem('savings')) || [];
+            if (!Array.isArray(savings)) savings = [];
+        } catch(e) {
+            savings = [];
+        }
+
+        // --- Настройки Цели ---
+        const baseGoal = 10000000;
+        const targetDate = new Date('2030-01-20T00:00:00');
+        const inflationRate = 0.075; 
+        const depositRate = 0.15; 
+        const totalSqm = 30; 
+        const costPerSqm = baseGoal / totalSqm;
+
+        // --- База Спринтов (10 штук разной сложности) ---
+        const sprintsDB = [
+            { name: "Лёгкая разминка", target: 20000, reward: "Пицца или фастфуд на выходных 🍕" },
+            { name: "Спокойный темп", target: 25000, reward: "Вечер кино с девушкой 🍿" },
+            { name: "Уверенный шаг", target: 35000, reward: "Вкусный ужин в кафе 🍔" },
+            { name: "Золотая середина", target: 40000, reward: "Полные выходные без мыслей о доставке 🛋️" },
+            { name: "Рабочая неделя", target: 45000, reward: "Покупка приятной мелочи для себя 🎁" },
+            { name: "Плотный график", target: 50000, reward: "Поход в баню/спа или долгий сон 🧖‍♂️" },
+            { name: "Режим турбо", target: 60000, reward: "Дорогая доставка еды и полный чилл 🍣" },
+            { name: "Вызов принят", target: 70000, reward: "Свидание со спокойной душой 🥂" },
+            { name: "Неделя мамонта", target: 80000, reward: "Полный отрыв на выходных (в меру) 🎮" },
+            { name: "Режим берсерка", target: 100000, reward: "Чувствовать себя боссом и гордиться собой 👑" }
+        ];
+
+        function toggleTheme() {
+            if (document.documentElement.classList.contains('dark')) {
+                document.documentElement.classList.remove('dark');
+                localStorage.setItem('theme', 'light');
+                document.getElementById('theme-icon').innerText = '🌙';
+            } else {
+                document.documentElement.classList.add('dark');
+                localStorage.setItem('theme', 'dark');
+                document.getElementById('theme-icon').innerText = '☀️';
+            }
+        }
+
+        function calculateWithCompoundInterest() {
+            if (savings.length === 0) return 0;
+            const totalInvested = savings.reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
+            const dates = savings.map(item => item.date ? new Date(item.date) : new Date());
+            const firstDate = new Date(Math.min(...dates));
+            const now = new Date();
+            
+            const monthsPassed = Math.max(1, (now.getFullYear() - firstDate.getFullYear()) * 12 + now.getMonth() - firstDate.getMonth());
+            let accumulated = 0;
+            const monthlyRate = depositRate / 12;
+            const averageMonthlyContribution = totalInvested / monthsPassed;
+            
+            for (let i = 0; i < monthsPassed; i++) {
+                accumulated = (accumulated + averageMonthlyContribution) * (1 + monthlyRate);
+            }
+            return Math.round(accumulated);
+        }
+
+        function updateSprintUI() {
+            const now = new Date();
+            const dayOfWeek = now.getDay(); // 0 - Вс, 1 - Пн ... 6 - Сб
+            const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
+
+            // Находим Понедельник текущей недели
+            const currentMonday = new Date(now);
+            const diffToMonday = currentMonday.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
+            currentMonday.setDate(diffToMonday);
+            currentMonday.setHours(0,0,0,0);
+            const mondayStr = currentMonday.toDateString();
+
+            // Проверяем, есть ли сохраненный спринт на эту неделю
+            let savedSprint = JSON.parse(localStorage.getItem('currentSprint'));
+            if (!savedSprint || savedSprint.week !== mondayStr) {
+                // Выбираем случайный спринт для новой недели
+                const randomId = Math.floor(Math.random() * sprintsDB.length);
+                savedSprint = { week: mondayStr, id: randomId };
+                localStorage.setItem('currentSprint', JSON.stringify(savedSprint));
+            }
+            
+            const activeSprint = sprintsDB[savedSprint.id];
+
+            // Считаем заработок за эту неделю
+            const thisWeekSavings = savings.filter(item => {
+                if(!item.date) return false;
+                return new Date(item.date) >= currentMonday;
+            });
+            const sprintTotal = thisWeekSavings.reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
+            const percent = Math.min((sprintTotal / activeSprint.target) * 100, 100);
+
+            // Обновляем UI Спринта
+            document.getElementById('sprint-title').innerText = `🔥 ${activeSprint.name}`;
+            document.getElementById('sprint-progress-text').innerText = `${sprintTotal.toLocaleString()} / ${activeSprint.target.toLocaleString()} ₸`;
+            document.getElementById('sprint-bar').style.width = percent + '%';
+            
+            const rewardEl = document.getElementById('sprint-reward');
+            const timerEl = document.getElementById('sprint-timer');
+
+            if (percent >= 100) {
+                rewardEl.innerHTML = `<span class="text-emerald-300 font-bold">ЦЕЛЬ ВЫПОЛНЕНА! 🎉</span> <br>${activeSprint.reward}`;
+                document.getElementById('sprint-bar').classList.add('bg-emerald-400');
+                timerEl.innerText = "Успех!";
+            } else if (isWeekend) {
+                rewardEl.innerHTML = `<span class="text-yellow-300">Выходные!</span> Отдыхай. Спринт не закрыт, повезет на следующей неделе.`;
+                timerEl.innerText = "Выходной";
+            } else {
+                rewardEl.innerText = activeSprint.reward;
+                // Считаем дни до конца пятницы
+                const friday = new Date(currentMonday);
+                friday.setDate(currentMonday.getDate() + 4);
+                friday.setHours(23, 59, 59, 999);
+                const daysLeftSprint = Math.ceil((friday - now) / (1000 * 60 * 60 * 24));
+                timerEl.innerText = `Осталось дней: ${daysLeftSprint}`;
+            }
+        }
+
+        function updateUI() {
+            const now = new Date();
+            if (document.documentElement.classList.contains('dark')) {
+                document.getElementById('theme-icon').innerText = '☀️';
+            } else {
+                document.getElementById('theme-icon').innerText = '🌙';
+            }
+
+            // --- Спринт ---
+            updateSprintUI();
+
+            // --- Общая статистика ---
+            const diffTime = targetDate - now;
+            const daysLeft = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            document.getElementById('days-left').innerText = `Осталось: ${daysLeft > 0 ? daysLeft : 0} дн. до 30 лет`;
+
+            const yearsLeft = Math.max(0, diffTime / (1000 * 60 * 60 * 24 * 365.25));
+            const adjustedGoal = Math.round(baseGoal * Math.pow(1 + inflationRate, yearsLeft));
+            document.getElementById('target-adjusted').innerText = `Цель с инфляцией: ${adjustedGoal.toLocaleString()} ₸`;
+
+            const currentBalance = calculateWithCompoundInterest();
+            document.getElementById('progress-text').innerText = currentBalance.toLocaleString() + ' ₸';
+            document.getElementById('progress-bar').style.width = Math.min((currentBalance / adjustedGoal) * 100, 100) + '%';
+
+            // --- Отрисовка квартиры ---
+            const purchasedSqm = Math.min(totalSqm, currentBalance / costPerSqm);
+            const gridContainer = document.getElementById('apartment-grid');
+            gridContainer.innerHTML = '';
+            
+            for (let i = 1; i <= totalSqm; i++) {
+                const sqBox = document.createElement('div');
+                sqBox.className = "aspect-square rounded border transition-colors duration-300";
+                
+                if (i <= Math.floor(purchasedSqm)) {
+                    sqBox.className += " bg-blue-600 border-blue-700 dark:bg-blue-500 dark:border-blue-400";
+                } else if (i === Math.ceil(purchasedSqm)) {
+                    sqBox.className += " bg-blue-300 border-blue-400 dark:bg-blue-800 dark:border-blue-700";
+                } else {
+                    sqBox.className += " bg-gray-100 border-gray-300 dark:bg-gray-700 dark:border-gray-600";
+                }
+                gridContainer.appendChild(sqBox);
+            }
+
+            let zoneText = "";
+            if (purchasedSqm < 3) zoneText = `Выкупили ${purchasedSqm.toFixed(1)} из 3 кв.м — строим Прихожую 🚪`;
+            else if (purchasedSqm < 8) zoneText = `Выкупили ${purchasedSqm.toFixed(1)} из 8 кв.м — строим Санузел 🚿`;
+            else if (purchasedSqm < 18) zoneText = `Выкупили ${purchasedSqm.toFixed(1)} из 18 кв.м — строим уютную Кухню 🍳`;
+            else if (purchasedSqm < 30) zoneText = `Выкупили ${purchasedSqm.toFixed(1)} из 30 кв.м — Жилая комната и Балкон 🛋️`;
+            else zoneText = "🎉 Поздравляем! Квартира полностью выкуплена за наличные!";
+            document.getElementById('apartment-zone').innerText = zoneText;
+
+            // --- Аналитика ---
+            const thisMonth = savings.filter(item => {
+                if (!item.date) return false;
+                const d = new Date(item.date);
+                return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+            });
+            const monthTotal = thisMonth.reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
+            document.getElementById('stat-month').innerText = monthTotal.toLocaleString() + ' ₸';
+
+            let avgMonthly = 0;
+            if (savings.length > 0) {
+                const dates = savings.map(item => item.date ? new Date(item.date) : new Date());
+                const firstDate = new Date(Math.min(...dates));
+                const totalMonths = Math.max(1, (now.getFullYear() - firstDate.getFullYear()) * 12 + now.getMonth() - firstDate.getMonth() + 1);
+                const totalInvested = savings.reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
+                avgMonthly = Math.round(totalInvested / totalMonths);
+            }
+            document.getElementById('stat-avg-month').innerText = avgMonthly.toLocaleString() + ' ₸';
+
+            const forecastDateEl = document.getElementById('forecast-date');
+            const forecastStatusEl = document.getElementById('forecast-status');
+            
+            if (avgMonthly >= 10000) { 
+                let tempBalance = currentBalance;
+                let forecastMonths = 0;
+                const monthlyRate = depositRate / 12;
+                
+                while (tempBalance < adjustedGoal && forecastMonths < 240) { 
+                    tempBalance = (tempBalance + avgMonthly) * (1 + monthlyRate);
+                    forecastMonths++;
+                }
+                
+                const fDate = new Date();
+                fDate.setMonth(fDate.getMonth() + forecastMonths);
+                forecastDateEl.innerText = fDate.toLocaleDateString('ru-RU', { month: 'long', year: 'numeric' });
+                
+                if (fDate < targetDate) {
+                    forecastStatusEl.innerText = "🔥 Отличный темп! Укладываетесь до 30 лет.";
+                    forecastStatusEl.className = "text-[10px] text-green-600 dark:text-green-400 mt-1";
+                } else {
+                    forecastStatusEl.innerText = "⚠️ Нужно поднажать, чтобы успеть до 30 лет!";
+                    forecastStatusEl.className = "text-[10px] text-orange-500 mt-1";
+                }
+            } else {
+                forecastDateEl.innerText = "Мало данных";
+                forecastStatusEl.innerText = "Внесите данные за этот месяц для расчета прогноза.";
+            }
+
+            // --- История ---
+            const history = document.getElementById('history');
+            if (savings.length === 0) {
+                history.innerHTML = '<div class="text-xs text-gray-400 text-center py-4">Здесь будет ваша история поступлений</div>';
+            } else {
+                history.innerHTML = savings.slice().reverse().map(item => `
+                    <div class="flex justify-between items-center text-xs border-b pb-2 dark:border-gray-700">
+                        <span class="text-gray-500">${item.date ? new Date(item.date).toLocaleDateString() : '—'}</span>
+                        <span class="font-bold">${item.source || 'Доход'}</span>
+                        <span class="text-blue-600 dark:text-blue-400 font-bold">+${(Number(item.amount) || 0).toLocaleString()} ₸</span>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function addAll() {
+            const cats = ['delivery', 'poly', 'main', 'other'];
+            const names = {'delivery': 'Доставка', 'poly': 'Полиграфия', 'main': 'Основная', 'other': 'Другое'};
+            let added = false;
+            
+            cats.forEach(cat => {
+                const inputEl = document.getElementById('cat-' + cat);
+                const val = parseInt(inputEl.value);
+                if (val > 0) {
+                    savings.push({ amount: val, source: names[cat], date: new Date().toISOString() });
+                    inputEl.value = '';
+                    added = true;
+                }
+            });
+            
+            if (added) {
+                localStorage.setItem('savings', JSON.stringify(savings));
+                updateUI();
+            }
+        }
+
+        function clearAll() {
+            if (confirm("Вы уверены, что хотите полностью стереть всю историю?")) {
+                localStorage.removeItem('savings');
+                localStorage.removeItem('currentSprint');
+                savings = [];
+                updateUI();
+            }
+        }
+
+        function shareProgress() {
+            const currentBalance = calculateWithCompoundInterest();
+            const purchasedSqm = Math.min(totalSqm, currentBalance / costPerSqm).toFixed(1);
+            const remainingSqm = (totalSqm - purchasedSqm).toFixed(1);
+            
+            const text = `Любимая, делюсь прогрессом по нашей квартире! 🏠\n\n💰 Накоплено: ${currentBalance.toLocaleString()} ₸\n📐 Выкупленная площадь: ${purchasedSqm} из 30 кв.м!\n🧱 Осталось достроить: ${remainingSqm} кв.м.\n\nДвигаемся к своей квартире! ❤️🚀`;
+            
+            navigator.clipboard.writeText(text).then(() => {
+                alert("Текст отчета скопирован! Теперь просто отправь его ей в WhatsApp/Telegram.");
+            }).catch(err => {
+                alert("Не удалось автоматически скопировать.");
+            });
+        }
+        
+        // Запуск
+        updateUI();
+    </script>
+</body>
+</html>
