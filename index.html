@@ -30,6 +30,18 @@
         </button>
     </div>
 
+    <!-- 1. НОВАЯ МЕХАНИКА: Случайное событие дня (Баннер) -->
+    <div id="random-event" class="hidden bg-gradient-to-r from-amber-400 to-orange-500 p-4 rounded-3xl shadow-lg mb-6 text-white relative transition-all duration-500">
+        <button onclick="closeEvent()" class="absolute top-3 right-4 text-white/70 hover:text-white font-bold text-lg">✕</button>
+        <div class="flex items-center gap-3 pr-6">
+            <span class="text-3xl" id="event-icon">🎲</span>
+            <div>
+                <h3 class="text-[10px] font-black uppercase tracking-wider opacity-80 mb-1">Событие дня</h3>
+                <p id="event-text" class="text-sm font-medium leading-tight"></p>
+            </div>
+        </div>
+    </div>
+
     <!-- Визуализация квартиры (30 квадратов) -->
     <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-lg mb-6 transition-colors">
         <h2 class="text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider mb-3">Визуализация квартиры (30 кв.м)</h2>
@@ -40,7 +52,7 @@
     </div>
 
     <!-- ЕЖЕНЕДЕЛЬНЫЙ СПРИНТ -->
-    <div class="bg-gradient-to-br from-indigo-600 to-blue-700 dark:from-indigo-900 dark:to-blue-900 p-6 rounded-3xl shadow-lg mb-6 text-white relative overflow-hidden">
+    <div class="bg-gradient-to-br from-indigo-600 to-blue-700 dark:from-indigo-900 dark:to-blue-900 p-6 rounded-3xl shadow-lg mb-4 text-white relative overflow-hidden">
         <div class="absolute top-0 right-0 p-4 opacity-20 text-6xl">🎯</div>
         <div class="relative z-10">
             <div class="flex justify-between items-end mb-2">
@@ -61,6 +73,22 @@
         </div>
     </div>
 
+    <!-- 2. НОВАЯ МЕХАНИКА: Побочный Квест недели -->
+    <div class="bg-white dark:bg-gray-800 p-5 rounded-3xl shadow-lg mb-6 transition-colors border-2 border-dashed border-purple-300 dark:border-purple-900/50 relative overflow-hidden">
+        <div class="absolute -right-4 -bottom-4 opacity-10 text-6xl grayscale">📜</div>
+        <div class="flex justify-between items-center mb-2 relative z-10">
+            <h2 class="text-[10px] text-purple-600 dark:text-purple-400 font-bold uppercase tracking-wider">Побочный Квест</h2>
+            <span id="quest-status" class="text-[9px] px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-500 rounded-full font-bold">В процессе</span>
+        </div>
+        <p id="quest-name" class="font-bold text-sm text-gray-800 dark:text-gray-100 relative z-10">...</p>
+        <p id="quest-desc" class="text-xs text-gray-500 dark:text-gray-400 mb-3 relative z-10">...</p>
+        
+        <div class="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-1.5 mb-1 overflow-hidden relative z-10">
+            <div id="quest-bar" class="bg-purple-500 h-full w-0 transition-all duration-500"></div>
+        </div>
+        <div id="quest-progress-text" class="text-right text-[10px] text-gray-400 font-bold relative z-10">0 / 0</div>
+    </div>
+
     <!-- Прогресс (Общий) -->
     <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-lg mb-6 transition-colors">
         <h1 class="text-xs text-gray-500 dark:text-gray-400 font-bold uppercase tracking-wider">Накопления (+15% деп)</h1>
@@ -73,7 +101,7 @@
             <span id="target-adjusted">Цель с инфляцией: 10 000 000 ₸</span>
         </div>
         
-        <button onclick="shareProgress()" class="w-full mt-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-2 px-4 rounded-xl text-xs transition duration-250 flex items-center justify-center gap-2">
+        <button onclick="shareProgress()" class="w-full mt-4 bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 px-4 rounded-xl text-sm transition duration-250 flex items-center justify-center gap-2 active:scale-95 shadow-md">
             <span>💬 Отправить отчет любимой</span>
         </button>
     </div>
@@ -99,26 +127,38 @@
     </div>
 
     <!-- Ввод данных -->
-    <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-lg mb-6 transition-colors">
-        <h2 class="font-bold mb-4 text-sm uppercase text-gray-600 dark:text-gray-400">Новое поступление</h2>
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-lg mb-6 transition-colors border-t-4 border-blue-500">
+        <h2 class="font-bold mb-4 text-sm uppercase text-gray-600 dark:text-gray-400 flex items-center gap-2">
+            <span>📥 Новое поступление</span>
+        </h2>
         <div class="space-y-3">
             <div class="flex items-center gap-3">
-                <span class="text-xs w-24 text-gray-600 dark:text-gray-300">Доставка</span>
-                <input type="number" id="cat-delivery" placeholder="0" class="w-full p-2 border rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors">
+                <span class="text-xs w-24 text-gray-600 dark:text-gray-300 font-medium">Доставка 🛵</span>
+                <input type="number" id="cat-delivery" placeholder="0" class="w-full p-2 border rounded-xl bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors">
             </div>
             <div class="flex items-center gap-3">
-                <span class="text-xs w-24 text-gray-600 dark:text-gray-300">Полиграфия</span>
-                <input type="number" id="cat-poly" placeholder="0" class="w-full p-2 border rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors">
+                <span class="text-xs w-24 text-gray-600 dark:text-gray-300 font-medium">Полиграфия 🖨️</span>
+                <input type="number" id="cat-poly" placeholder="0" class="w-full p-2 border rounded-xl bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors">
             </div>
             <div class="flex items-center gap-3">
-                <span class="text-xs w-24 text-gray-600 dark:text-gray-300">Основная</span>
-                <input type="number" id="cat-main" placeholder="0" class="w-full p-2 border rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors">
+                <span class="text-xs w-24 text-gray-600 dark:text-gray-300 font-medium">Основная 💼</span>
+                <input type="number" id="cat-main" placeholder="0" class="w-full p-2 border rounded-xl bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors">
             </div>
             <div class="flex items-center gap-3">
-                <span class="text-xs w-24 text-gray-600 dark:text-gray-300">Другое</span>
-                <input type="number" id="cat-other" placeholder="0" class="w-full p-2 border rounded-lg bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors">
+                <span class="text-xs w-24 text-gray-600 dark:text-gray-300 font-medium">Другое ✨</span>
+                <input type="number" id="cat-other" placeholder="0" class="w-full p-2 border rounded-xl bg-gray-50 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors">
             </div>
-            <button onclick="addAll()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 active:scale-95 transition mt-4">Сохранить всё</button>
+            <button onclick="addAll()" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 active:scale-95 transition mt-4 shadow-md">Сохранить поступления</button>
+        </div>
+    </div>
+
+    <!-- 3. НОВАЯ МЕХАНИКА: Достижения -->
+    <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-lg mb-6 transition-colors">
+        <h2 class="font-bold text-sm uppercase text-gray-600 dark:text-gray-400 mb-4 flex items-center gap-2">
+            <span>🏆 Зал славы (Ачивки)</span>
+        </h2>
+        <div id="achievements-grid" class="grid grid-cols-3 gap-2">
+            <!-- Сюда JS рендерит бейджи -->
         </div>
     </div>
 
@@ -126,9 +166,9 @@
     <div class="bg-white dark:bg-gray-800 p-6 rounded-3xl shadow-lg transition-colors">
         <div class="flex justify-between items-center mb-4">
             <h2 class="font-bold text-sm uppercase text-gray-600 dark:text-gray-400">История</h2>
-            <button onclick="clearAll()" class="text-[10px] text-red-500 hover:underline">Очистить данные</button>
+            <button onclick="clearAll()" class="text-[10px] text-red-500 hover:underline bg-red-50 dark:bg-red-900/20 px-2 py-1 rounded">Очистить данные</button>
         </div>
-        <div id="history" class="space-y-3"></div>
+        <div id="history" class="space-y-3 max-h-60 overflow-y-auto pr-2"></div>
     </div>
 
     <script>
@@ -148,7 +188,7 @@
         const totalSqm = 30; 
         const costPerSqm = baseGoal / totalSqm;
 
-        // --- База Спринтов (10 штук разной сложности) ---
+        // --- База Спринтов (старая) ---
         const sprintsDB = [
             { name: "Лёгкая разминка", target: 20000, reward: "Пицца или фастфуд на выходных 🍕" },
             { name: "Спокойный темп", target: 25000, reward: "Вечер кино с девушкой 🍿" },
@@ -160,6 +200,71 @@
             { name: "Вызов принят", target: 70000, reward: "Свидание со спокойной душой 🥂" },
             { name: "Неделя мамонта", target: 80000, reward: "Полный отрыв на выходных (в меру) 🎮" },
             { name: "Режим берсерка", target: 100000, reward: "Чувствовать себя боссом и гордиться собой 👑" }
+        ];
+
+// --- 1. База Событий (Расширенная) ---
+        const eventsDB = [
+            { text: "Отличный день, чтобы сэкономить на мелких расходах и закинуть эту сумму в квартиру! ☕", icon: "🍀" },
+            { text: "Рынок недвижимости не ждет. Даже 1000 ₸ сегодня — это шажок к своему балкону! 🧱", icon: "📈" },
+            { text: "Поднажми на полиграфию сегодня, звезды обещают хорошую отдачу! 🖨️", icon: "✨" },
+            { text: "Сэкономь на такси, пройдись пешком, а сэкономленные деньги отправь в копилку. Здоровье и метры! 🚶‍♂️", icon: "👟" },
+            { text: "Проверь свои подписки. Может, отменить что-то ненужное и перевести эти деньги на квартиру? 💳", icon: "🔍" },
+            { text: "Успех складывается из мелочей. Каждая отложенная купюра приближает момент, когда ты скажешь арендодателю «прощайте»! 🔑", icon: "🏠" },
+            { text: "Деньги любят счет, а твоя будущая прихожая любит пополнения. Сделай небольшой микро-взнось сегодня! 🪙", icon: "🎯" },
+            { text: "Сделай внеплановый заказ или добей текущую задачу побыстрее — свободное время будет слаще, а квадрат ближе! ⏱️", icon: "🚀" },
+            { text: "Вкусный кофе дома вместо кофейни — это еще пара кирпичиков в стены вашей будущей кухни. 🍳", icon: "☕" },
+            { text: "Вспомни, ради чего всё затевалось. Твой собственный угол к 30 годам — это лучшая инвестиция в себя! 🎯", icon: "🔥" },
+            { text: "Дисциплина бьет мотивацию. Даже если не хочется работать, пара часов фокуса окупят квадратные метры. 💪", icon: "⚡" },
+            { text: "Случайная удача любит подготовленных. Будь готов закинуть бонус с хорошего заказа в копилку! 💰", icon: "🌟" }
+        ];
+
+// --- 2. База Квестов (Расширенная) ---
+        const questsDB = [
+            { id: 1, name: "Мульти-доход", desc: "Сделать взносы с 2 разных источников", target: 2, unit: " шт",
+              calc: (weekSav) => new Set(weekSav.map(s => s.source)).size },
+            { id: 2, name: "Серия побед", desc: "Сделать 3 любых пополнения за неделю", target: 3, unit: " шт",
+              calc: (weekSav) => weekSav.length },
+            { id: 3, name: "Марафонец", desc: "Сделать 5 любых пополнений за неделю", target: 5, unit: " шт",
+              calc: (weekSav) => weekSav.length },
+            { id: 4, name: "Герой доставки", desc: "Внести 15 000 ₸ с Доставки", target: 15000, unit: " ₸",
+              calc: (weekSav) => weekSav.filter(s=>s.source.includes('Доставка')).reduce((a,b)=>a+(Number(b.amount)||0),0) },
+            { id: 5, name: "Магнат доставки", desc: "Внести 35 000 ₸ с Доставки", target: 35000, unit: " ₸",
+              calc: (weekSav) => weekSav.filter(s=>s.source.includes('Доставка')).reduce((a,b)=>a+(Number(b.amount)||0),0) },
+            { id: 6, name: "Печатный станок", desc: "Внести 20 000 ₸ с Полиграфии", target: 20000, unit: " ₸",
+              calc: (weekSav) => weekSav.filter(s=>s.source.includes('Полиграфия')).reduce((a,b)=>a+(Number(b.amount)||0),0) },
+            { id: 7, name: "Типографский бум", desc: "Внести 45 000 ₸ с Полиграфии", target: 45000, unit: " ₸",
+              calc: (weekSav) => weekSav.filter(s=>s.source.includes('Полиграфия')).reduce((a,b)=>a+(Number(b.amount)||0),0) },
+            { id: 8, name: "Карьерный рост", desc: "Внести 30 000 ₸ с Основной деятельности", target: 30000, unit: " ₸",
+              calc: (weekSav) => weekSav.filter(s=>s.source.includes('Основная')).reduce((a,b)=>a+(Number(b.amount)||0),0) },
+            { id: 9, name: "Внезапный бонус", desc: "Внести 10 000 ₸ из категории 'Другое'", target: 10000, unit: " ₸",
+              calc: (weekSav) => weekSav.filter(s=>s.source.includes('Другое')).reduce((a,b)=>a+(Number(b.amount)||0),0) },
+            { id: 10, name: "Сбалансированный портфель", desc: "Сделать взносы ровно с 3 разных источников", target: 3, unit: " шт",
+              calc: (weekSav) => new Set(weekSav.map(s => s.source)).size },
+            { id: 11, name: "Тяжеловес недели", desc: "Сделать разовый крупный взнос от 40 000 ₸", target: 40000, unit: " ₸",
+              calc: (weekSav) => { const max = Math.max(...weekSav.map(s => Number(s.amount) || 0), 0); return max >= 40000 ? 40000 : max; } },
+            { id: 12, name: "Везде успеваю", desc: "Задействовать все 4 источника за неделю", target: 4, unit: " шт",
+              calc: (weekSav) => new Set(weekSav.map(s => s.source)).size }
+        ];
+
+// --- 3. База Достижений (Расширенная) ---
+        const achievementsDB = [
+            { id: 'first_blood', icon: '🌱', name: 'Начало', desc: 'Сделать самый первый взнос', check: (bal, sav) => sav.length >= 1 },
+            { id: 'first_sqm', icon: '🧱', name: 'Первый метр', desc: 'Выкупить 1 кв.м.', check: (bal, sav) => (bal / costPerSqm) >= 1 },
+            { id: 'hallway', icon: '🚪', name: 'Прихожая', desc: 'Выкупить 3 кв.м.', check: (bal, sav) => (bal / costPerSqm) >= 3 },
+            { id: 'bathroom', icon: '🚿', name: 'Санузел', desc: 'Выкупить 8 кв.м.', check: (bal, sav) => (bal / costPerSqm) >= 8 },
+            { id: 'kitchen', icon: '🍳', name: 'Своя кухня', desc: 'Выкупить 18 кв.м.', check: (bal, sav) => (bal / costPerSqm) >= 18 },
+            { id: 'balcony', icon: '🌅', name: 'Балкон', desc: 'Выкупить 25 кв.м.', check: (bal, sav) => (bal / costPerSqm) >= 25 },
+            { id: 'finished', icon: '🏆', name: 'Ключи в кармане', desc: 'Выкупить все 30 кв.м.', check: (bal, sav) => (bal / costPerSqm) >= 30 },
+            { id: 'hustler', icon: '🔥', name: 'Хастлер', desc: 'Сделать 10 пополнений в сумме', check: (bal, sav) => sav.length >= 10 },
+            { id: 'veteran', icon: '⭐', name: 'Ветеран копилки', desc: 'Сделать 25 пополнений в сумме', check: (bal, sav) => sav.length >= 25 },
+            { id: 'delivery_boss', icon: '🛵', name: 'Король улиц', desc: 'Внести средства с Доставки', check: (bal, sav) => sav.some(s => s.source.includes('Доставка')) },
+            { id: 'poly_boss', icon: '🖨️', name: 'Типограф', desc: 'Внести средства с Полиграфии', check: (bal, sav) => sav.some(s => s.source.includes('Полиграфия')) },
+            { id: 'main_earner', icon: '💼', name: 'Профессионал', desc: 'Внести средства с Основной работы', check: (bal, sav) => sav.some(s => s.source.includes('Основная')) },
+            { id: 'big_fish', icon: '🐳', name: 'Крупная рыба', desc: 'Единоразово внести 50 000+ ₸', check: (bal, sav) => sav.some(s => s.amount >= 50000) },
+            { id: 'whale', icon: '🐋', name: 'Финансовый кит', desc: 'Единоразово внести 100 000+ ₸', check: (bal, sav) => sav.some(s => s.amount >= 100000) },
+            { id: 'first_100k', icon: '💵', name: 'Первая сотка', desc: 'Накопить 100 000 ₸', check: (bal, sav) => bal >= 100000 },
+            { id: 'half_m', icon: '💰', name: 'Полпути к ляму', desc: 'Накопить 500 000 ₸', check: (bal, sav) => bal >= 500000 },
+            { id: 'millionaire', icon: '👑', name: 'Миллионер', desc: 'Накопить 1 000 000 ₸', check: (bal, sav) => bal >= 1000000 }
         ];
 
         function toggleTheme() {
@@ -192,61 +297,137 @@
             return Math.round(accumulated);
         }
 
-        function updateSprintUI() {
+        function getMonday(d) {
+            d = new Date(d);
+            var day = d.getDay(), diff = d.getDate() - day + (day === 0 ? -6 : 1);
+            return new Date(d.setDate(diff)).setHours(0,0,0,0);
+        }
+
+        function updateWeeklyMechanics() {
             const now = new Date();
-            const dayOfWeek = now.getDay(); // 0 - Вс, 1 - Пн ... 6 - Сб
+            const currentMonday = new Date(getMonday(now));
+            const mondayStr = currentMonday.toDateString();
+            const dayOfWeek = now.getDay();
             const isWeekend = (dayOfWeek === 0 || dayOfWeek === 6);
 
-            // Находим Понедельник текущей недели
-            const currentMonday = new Date(now);
-            const diffToMonday = currentMonday.getDate() - dayOfWeek + (dayOfWeek === 0 ? -6 : 1);
-            currentMonday.setDate(diffToMonday);
-            currentMonday.setHours(0,0,0,0);
-            const mondayStr = currentMonday.toDateString();
-
-            // Проверяем, есть ли сохраненный спринт на эту неделю
+            // 1. Спринт
             let savedSprint = JSON.parse(localStorage.getItem('currentSprint'));
             if (!savedSprint || savedSprint.week !== mondayStr) {
-                // Выбираем случайный спринт для новой недели
                 const randomId = Math.floor(Math.random() * sprintsDB.length);
                 savedSprint = { week: mondayStr, id: randomId };
                 localStorage.setItem('currentSprint', JSON.stringify(savedSprint));
             }
             
             const activeSprint = sprintsDB[savedSprint.id];
-
-            // Считаем заработок за эту неделю
-            const thisWeekSavings = savings.filter(item => {
-                if(!item.date) return false;
-                return new Date(item.date) >= currentMonday;
-            });
+            const thisWeekSavings = savings.filter(item => item.date && new Date(item.date) >= currentMonday);
             const sprintTotal = thisWeekSavings.reduce((sum, item) => sum + (Number(item.amount) || 0), 0);
-            const percent = Math.min((sprintTotal / activeSprint.target) * 100, 100);
+            const sprintPercent = Math.min((sprintTotal / activeSprint.target) * 100, 100);
 
-            // Обновляем UI Спринта
             document.getElementById('sprint-title').innerText = `🔥 ${activeSprint.name}`;
             document.getElementById('sprint-progress-text').innerText = `${sprintTotal.toLocaleString()} / ${activeSprint.target.toLocaleString()} ₸`;
-            document.getElementById('sprint-bar').style.width = percent + '%';
+            document.getElementById('sprint-bar').style.width = sprintPercent + '%';
             
             const rewardEl = document.getElementById('sprint-reward');
             const timerEl = document.getElementById('sprint-timer');
 
-            if (percent >= 100) {
+            if (sprintPercent >= 100) {
                 rewardEl.innerHTML = `<span class="text-emerald-300 font-bold">ЦЕЛЬ ВЫПОЛНЕНА! 🎉</span> <br>${activeSprint.reward}`;
-                document.getElementById('sprint-bar').classList.add('bg-emerald-400');
+                document.getElementById('sprint-bar').className = "bg-emerald-400 h-full transition-all duration-500 shadow-[0_0_10px_rgba(52,211,153,0.8)]";
                 timerEl.innerText = "Успех!";
+                timerEl.className = "text-[10px] bg-emerald-500/80 text-white px-2 py-1 rounded-full font-bold";
             } else if (isWeekend) {
-                rewardEl.innerHTML = `<span class="text-yellow-300">Выходные!</span> Отдыхай. Спринт не закрыт, повезет на следующей неделе.`;
+                rewardEl.innerHTML = `<span class="text-yellow-300">Выходные!</span> Отдыхай. Повезет на следующей неделе.`;
                 timerEl.innerText = "Выходной";
             } else {
                 rewardEl.innerText = activeSprint.reward;
-                // Считаем дни до конца пятницы
                 const friday = new Date(currentMonday);
                 friday.setDate(currentMonday.getDate() + 4);
                 friday.setHours(23, 59, 59, 999);
                 const daysLeftSprint = Math.ceil((friday - now) / (1000 * 60 * 60 * 24));
                 timerEl.innerText = `Осталось дней: ${daysLeftSprint}`;
+                timerEl.className = "text-[10px] bg-white/20 px-2 py-1 rounded-full";
             }
+
+            // 2. Побочный Квест
+            let savedQuest = JSON.parse(localStorage.getItem('currentQuest'));
+            if (!savedQuest || savedQuest.week !== mondayStr) {
+                const rqId = Math.floor(Math.random() * questsDB.length);
+                savedQuest = { week: mondayStr, id: rqId };
+                localStorage.setItem('currentQuest', JSON.stringify(savedQuest));
+            }
+
+            const activeQuest = questsDB[savedQuest.id];
+            const questCurrent = activeQuest.calc(thisWeekSavings);
+            const questPercent = Math.min((questCurrent / activeQuest.target) * 100, 100);
+
+            document.getElementById('quest-name').innerText = activeQuest.name;
+            document.getElementById('quest-desc').innerText = activeQuest.desc;
+            document.getElementById('quest-progress-text').innerText = `${questCurrent.toLocaleString()}${activeQuest.unit} / ${activeQuest.target.toLocaleString()}${activeQuest.unit}`;
+            document.getElementById('quest-bar').style.width = questPercent + '%';
+
+            const qStatus = document.getElementById('quest-status');
+            if (questPercent >= 100) {
+                qStatus.innerText = "ВЫПОЛНЕНО 🏆";
+                qStatus.className = "text-[9px] px-2 py-1 bg-green-100 text-green-600 dark:bg-green-900/30 dark:text-green-400 rounded-full font-bold shadow-sm";
+                document.getElementById('quest-bar').className = "bg-green-500 h-full transition-all duration-500 shadow-[0_0_8px_rgba(34,197,94,0.6)]";
+            } else {
+                qStatus.innerText = "В процессе";
+                qStatus.className = "text-[9px] px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-500 rounded-full font-bold";
+                document.getElementById('quest-bar').className = "bg-purple-500 h-full transition-all duration-500";
+            }
+        }
+
+        function updateAchievements(currentBalance) {
+            const grid = document.getElementById('achievements-grid');
+            grid.innerHTML = '';
+            
+            achievementsDB.forEach(ach => {
+                const isUnlocked = ach.check(currentBalance, savings);
+                const badge = document.createElement('div');
+                
+                if (isUnlocked) {
+                    badge.className = "bg-gradient-to-br from-yellow-50 to-amber-100 dark:from-gray-700 dark:to-gray-600 p-2 rounded-xl text-center border border-amber-200 dark:border-gray-500 shadow-sm flex flex-col items-center justify-center h-24";
+                    badge.innerHTML = `
+                        <div class="text-2xl mb-1 filter drop-shadow-sm">${ach.icon}</div>
+                        <div class="text-[9px] font-bold text-amber-900 dark:text-amber-300 leading-tight">${ach.name}</div>
+                    `;
+                } else {
+                    badge.className = "bg-gray-50 dark:bg-gray-800 p-2 rounded-xl text-center border border-dashed border-gray-200 dark:border-gray-700 opacity-60 grayscale flex flex-col items-center justify-center h-24";
+                    badge.innerHTML = `
+                        <div class="text-2xl mb-1">${ach.icon}</div>
+                        <div class="text-[9px] font-medium text-gray-400 leading-tight">${ach.name}</div>
+                    `;
+                }
+                grid.appendChild(badge);
+            });
+        }
+
+        function setupRandomEvent() {
+            const eventBox = document.getElementById('random-event');
+            const now = new Date();
+            const dateStr = now.toDateString();
+            
+            const closedDate = localStorage.getItem('eventClosedDate');
+            if (closedDate === dateStr) {
+                eventBox.classList.add('hidden'); // Если сегодня уже закрывали - прячем
+                return;
+            }
+
+            let savedEvent = JSON.parse(localStorage.getItem('dailyEvent'));
+            if (!savedEvent || savedEvent.date !== dateStr) {
+                const randomItem = eventsDB[Math.floor(Math.random() * eventsDB.length)];
+                savedEvent = { date: dateStr, text: randomItem.text, icon: randomItem.icon };
+                localStorage.setItem('dailyEvent', JSON.stringify(savedEvent));
+            }
+
+            document.getElementById('event-text').innerText = savedEvent.text;
+            document.getElementById('event-icon').innerText = savedEvent.icon;
+            eventBox.classList.remove('hidden');
+        }
+
+        function closeEvent() {
+            document.getElementById('random-event').classList.add('hidden');
+            localStorage.setItem('eventClosedDate', new Date().toDateString());
         }
 
         function updateUI() {
@@ -257,10 +438,14 @@
                 document.getElementById('theme-icon').innerText = '🌙';
             }
 
-            // --- Спринт ---
-            updateSprintUI();
+            const currentBalance = calculateWithCompoundInterest();
 
-            // --- Общая статистика ---
+            // --- События, Спринты, Квесты и Ачивки ---
+            setupRandomEvent();
+            updateWeeklyMechanics();
+            updateAchievements(currentBalance);
+
+            // --- Общая статистика (старое) ---
             const diffTime = targetDate - now;
             const daysLeft = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
             document.getElementById('days-left').innerText = `Осталось: ${daysLeft > 0 ? daysLeft : 0} дн. до 30 лет`;
@@ -269,23 +454,22 @@
             const adjustedGoal = Math.round(baseGoal * Math.pow(1 + inflationRate, yearsLeft));
             document.getElementById('target-adjusted').innerText = `Цель с инфляцией: ${adjustedGoal.toLocaleString()} ₸`;
 
-            const currentBalance = calculateWithCompoundInterest();
             document.getElementById('progress-text').innerText = currentBalance.toLocaleString() + ' ₸';
             document.getElementById('progress-bar').style.width = Math.min((currentBalance / adjustedGoal) * 100, 100) + '%';
 
-            // --- Отрисовка квартиры ---
+            // --- Отрисовка квартиры (старое) ---
             const purchasedSqm = Math.min(totalSqm, currentBalance / costPerSqm);
             const gridContainer = document.getElementById('apartment-grid');
             gridContainer.innerHTML = '';
             
             for (let i = 1; i <= totalSqm; i++) {
                 const sqBox = document.createElement('div');
-                sqBox.className = "aspect-square rounded border transition-colors duration-300";
+                sqBox.className = "aspect-square rounded border transition-colors duration-300 shadow-sm";
                 
                 if (i <= Math.floor(purchasedSqm)) {
                     sqBox.className += " bg-blue-600 border-blue-700 dark:bg-blue-500 dark:border-blue-400";
                 } else if (i === Math.ceil(purchasedSqm)) {
-                    sqBox.className += " bg-blue-300 border-blue-400 dark:bg-blue-800 dark:border-blue-700";
+                    sqBox.className += " bg-blue-300 border-blue-400 dark:bg-blue-800 dark:border-blue-700 animate-pulse";
                 } else {
                     sqBox.className += " bg-gray-100 border-gray-300 dark:bg-gray-700 dark:border-gray-600";
                 }
@@ -300,7 +484,7 @@
             else zoneText = "🎉 Поздравляем! Квартира полностью выкуплена за наличные!";
             document.getElementById('apartment-zone').innerText = zoneText;
 
-            // --- Аналитика ---
+            // --- Аналитика (старое) ---
             const thisMonth = savings.filter(item => {
                 if (!item.date) return false;
                 const d = new Date(item.date);
@@ -338,17 +522,18 @@
                 
                 if (fDate < targetDate) {
                     forecastStatusEl.innerText = "🔥 Отличный темп! Укладываетесь до 30 лет.";
-                    forecastStatusEl.className = "text-[10px] text-green-600 dark:text-green-400 mt-1";
+                    forecastStatusEl.className = "text-[10px] text-green-600 dark:text-green-400 mt-1 font-bold";
                 } else {
                     forecastStatusEl.innerText = "⚠️ Нужно поднажать, чтобы успеть до 30 лет!";
-                    forecastStatusEl.className = "text-[10px] text-orange-500 mt-1";
+                    forecastStatusEl.className = "text-[10px] text-orange-500 mt-1 font-bold";
                 }
             } else {
                 forecastDateEl.innerText = "Мало данных";
                 forecastStatusEl.innerText = "Внесите данные за этот месяц для расчета прогноза.";
+                forecastStatusEl.className = "text-[10px] text-blue-500 dark:text-blue-400 mt-1";
             }
 
-            // --- История ---
+            // --- История (старое) ---
             const history = document.getElementById('history');
             if (savings.length === 0) {
                 history.innerHTML = '<div class="text-xs text-gray-400 text-center py-4">Здесь будет ваша история поступлений</div>';
@@ -356,7 +541,7 @@
                 history.innerHTML = savings.slice().reverse().map(item => `
                     <div class="flex justify-between items-center text-xs border-b pb-2 dark:border-gray-700">
                         <span class="text-gray-500">${item.date ? new Date(item.date).toLocaleDateString() : '—'}</span>
-                        <span class="font-bold">${item.source || 'Доход'}</span>
+                        <span class="font-bold bg-gray-100 dark:bg-gray-700 px-2 py-0.5 rounded">${item.source || 'Доход'}</span>
                         <span class="text-blue-600 dark:text-blue-400 font-bold">+${(Number(item.amount) || 0).toLocaleString()} ₸</span>
                     </div>
                 `).join('');
@@ -381,6 +566,9 @@
             if (added) {
                 localStorage.setItem('savings', JSON.stringify(savings));
                 updateUI();
+                
+                // Простая анимация или вибрация при успехе (если поддерживает устройство)
+                if (navigator.vibrate) navigator.vibrate(50);
             }
         }
 
@@ -388,6 +576,8 @@
             if (confirm("Вы уверены, что хотите полностью стереть всю историю?")) {
                 localStorage.removeItem('savings');
                 localStorage.removeItem('currentSprint');
+                localStorage.removeItem('currentQuest');
+                localStorage.removeItem('eventClosedDate');
                 savings = [];
                 updateUI();
             }
